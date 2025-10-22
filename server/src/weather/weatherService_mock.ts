@@ -4,7 +4,7 @@ import { WeatherServiceRequest, DisplayWeather, HourlyResponse, DailyResponse } 
 import { IWeatherService } from "./weatherService.ts";
 
 export const mock: IWeatherService = {
-  getCurrent: function (_: WeatherServiceRequest): Promise<PossibleError<DisplayWeather>> {
+  getCurrent: function (_req: WeatherServiceRequest): Promise<PossibleError<DisplayWeather>> {
     const response: DisplayWeather = {
         weatherType: "sunny",
         description: "sunny",
@@ -18,7 +18,7 @@ export const mock: IWeatherService = {
     });
   },
 
-  getHourly: function (_: WeatherServiceRequest): Promise<PossibleError<HourlyResponse>> {
+  getHourly: function (_req: WeatherServiceRequest): Promise<PossibleError<HourlyResponse>> {
     const response: HourlyResponse = {
         hours: [
             {
@@ -43,7 +43,7 @@ export const mock: IWeatherService = {
     });
   },
 
-  getDaily: function (_: WeatherServiceRequest): Promise<PossibleError<DailyResponse>> {
+  getDaily: function (_req: WeatherServiceRequest): Promise<PossibleError<DailyResponse>> {
     const response: DailyResponse = {
         days: [
             {

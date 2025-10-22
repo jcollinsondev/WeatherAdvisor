@@ -1,6 +1,52 @@
 import { assertEquals } from "assert";
 
-Deno.test("simple test", () => {
-  const x = 1 + 2;
-  assertEquals(x, 3);
+import { mock as weatherMock, WeatherServiceRequest } from "@weather";
+import { mock as llmMock, PromptGenerator } from "@llm";
+
+Deno.test("Prompt generation hourly", async () => {
+    const mockRequest: WeatherServiceRequest = { location: { lat: 0, lon: 0 }, timeframe: { from: new Date(), to: new Date() } };
+    const [hourlyWeather] = await weatherMock.getHourly(mockRequest);
+    
+    const promptGenerator = new PromptGenerator("Should I dry my clothes outside today?");
+    promptGenerator.setWeatherData("hourly", hourlyWeather);
+    const [prompt, error] = promptGenerator.generate();
+
+    assertEquals(error, undefined);
+    assertEquals(prompt, `Should I dry my clothes outside today? Given the following weather data: [{
+            time: between 12:00 and 13:00,
+            temperature: 25 °C,
+            temperature feeling like: 25 °C,
+            humidity: 30 %,
+            uvi: 0 (UV index),
+            clouds: 0 %,
+            visibility: 10000 meters,
+            wind: 0 meter/sec,
+            rain: 0 mm/h,
+            snow: 0 mm/h,
+        }]. 
+            Responde suggesting the best times of the day if there is at least one.`);
+});
+
+Deno.test("Prompt generation daily", async () => {
+    const mockRequest: WeatherServiceRequest = { location: { lat: 0, lon: 0 }, timeframe: { from: new Date(), to: new Date() } };
+    const [dailyWeather] = await weatherMock.getDaily(mockRequest);
+    
+    const promptGenerator = new PromptGenerator("Should I dry my clothes outside this weekend?");
+    promptGenerator.setWeatherData("daily", dailyWeather);
+    const [prompt, error] = promptGenerator.generate();
+
+    assertEquals(error, undefined);
+    assertEquals(prompt, `Should I dry my clothes outside this weekend? Given the following weather data: [{
+            day: Sunday,
+            temperature: 25 °C,
+            temperature feeling like: 25 °C,
+            humidity: 30 %,
+            uvi: 0 (UV index),
+            clouds: 0 %,
+            visibility: 10000 meters,
+            wind: 0 meter/sec,
+            rain: 0 mm/h,
+            snow: 0 mm/h,
+        }]. 
+            Responde suggesting the best days if there is at least one.`);
 });
