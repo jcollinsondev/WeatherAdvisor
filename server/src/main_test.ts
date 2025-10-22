@@ -1,4 +1,4 @@
-import { assertEquals } from "assert/mod.ts";
+import { assertEquals } from "assert";
 
 Deno.test("simple test", () => {
   const x = 1 + 2;
