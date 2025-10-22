@@ -2,7 +2,7 @@
 FROM denoland/deno:2.5.0 AS builder
 WORKDIR /app
 COPY . .
-RUN deno cache ./src/main.ts
+RUN deno test
 
 # Production stage
 FROM denoland/deno:2.5.0
