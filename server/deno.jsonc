@@ -3,6 +3,7 @@
         "assert": "https://deno.land/std@0.198.0/assert/mod.ts",
         "@utils": "./src/utils/index.ts",
         "@weather": "./src/weather/index.ts",
-        "@llm": "./src/llm/index.ts"
+        "@llm": "./src/llm/index.ts",
+        "@OpenMeteo": "./src/weather/OpenMeteo/OpenMeteoService.ts"
     }
 }

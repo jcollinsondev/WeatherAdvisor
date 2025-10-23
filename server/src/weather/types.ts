@@ -46,11 +46,11 @@ export interface WeatherData {
 }
 
 export interface HourlyResponse {
-    hours: [HourlyData];
+    hours: HourlyData[];
 }
 
 export interface DailyResponse {
-    days: [DailyData];
+    days: DailyData[];
 }
 
 export interface HourlyData {

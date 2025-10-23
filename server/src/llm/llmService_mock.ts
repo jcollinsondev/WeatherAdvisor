@@ -1,6 +1,6 @@
 import { PossibleError } from "@utils";
 
-import { ILlmService } from "./llmService.ts";
+import { ILlmService } from "./LlmService.ts";
 
 export const mock: ILlmService = {
   ask: function (_prompt: string): Promise<PossibleError<string>> {

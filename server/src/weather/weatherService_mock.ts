@@ -1,7 +1,7 @@
 import { PossibleError } from "@utils";
 
 import { WeatherServiceRequest, DisplayWeather, HourlyResponse, DailyResponse } from "./types.ts";
-import { IWeatherService } from "./weatherService.ts";
+import { IWeatherService } from "./WeatherService.ts";
 
 export const mock: IWeatherService = {
   getCurrent: function (_req: WeatherServiceRequest): Promise<PossibleError<DisplayWeather>> {

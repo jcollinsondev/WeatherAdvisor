@@ -17,22 +17,22 @@ export interface OpenMeteoRequest {
 }
 
 export type CurrentOpenMeteoResponse<Variables extends readonly CurrentWeatherVariable[]> = OpenMeteoResponseBase & {
-    current_units?: CurrentUnits<Variables>;
-    current?: Current<Variables>;
+    current_units: CurrentUnits<Variables>;
+    current: Current<Variables>;
 }
 
 export type HourlyOpenMeteoResponse<Variables extends readonly HourlyWeatherVariable[]> = OpenMeteoResponseBase & {
-    hourly_units?: HourlyUnits<Variables>;
-    hourly?: Times;
+    hourly_units: HourlyUnits<Variables>;
+    hourly: Times;
 } & {
-    [key in Variables[number]]?: number;
+    [key in Variables[number]]: number[];
 }
 
 export type DailyOpenMeteoResponse<Variables extends readonly DailyWeatherVariable[]> = OpenMeteoResponseBase & {
-    daily_units?: DailyUnits<Variables>;
-    daily?: Times;
+    daily_units: DailyUnits<Variables>;
+    daily: Times;
 } & {
-    [key in Variables[number]]?: number;
+    [key in Variables[number]]: number[];
 }
 
 type OpenMeteoResponseBase = {
@@ -58,24 +58,24 @@ type CurrentUnits<Variables extends readonly CurrentWeatherVariable[]> = {
     time: string;
     interval: string;
 } & {
-    [key in Variables[number]]?: string;
+    [key in Variables[number]]: string;
 }
 
 type Current<Variables extends readonly CurrentWeatherVariable[]> = {
     time: Date;
     interval: number;
 } & {
-    [key in Variables[number]]?: number;
+    [key in Variables[number]]: number;
 }
 
 type HourlyUnits<Variables extends readonly HourlyWeatherVariable[]> = {
     time: string;
 } & {
-    [key in Variables[number]]?: string;
+    [key in Variables[number]]: string;
 }
 
 type DailyUnits<Variables extends readonly DailyWeatherVariable[]> = {
     time: string;
 } & {
-    [key in Variables[number]]?: string;
+    [key in Variables[number]]: string;
 }

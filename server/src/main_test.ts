@@ -1,7 +1,7 @@
 import { assertEquals } from "assert";
 
 import { mock as weatherMock, WeatherServiceRequest } from "@weather";
-import { mock as llmMock, PromptGenerator } from "@llm";
+import { PromptGenerator } from "@llm";
 
 Deno.test("Prompt generation hourly", async () => {
     const mockRequest: WeatherServiceRequest = { location: { lat: 0, lon: 0 }, timeframe: { from: new Date(), to: new Date() } };
