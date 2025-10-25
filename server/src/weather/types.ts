@@ -1,3 +1,5 @@
+import { Location } from "@location";
+
 export type WeatherType = 
     | "sunny"
     | "clear-night"
@@ -66,11 +68,6 @@ export interface DailyData {
 export interface WeatherServiceRequest {
     location: Location;
     timeframe: Timeframe;
-}
-
-export interface Location {
-    lat: number;
-    lon: number;
 }
 
 export interface Timeframe {
