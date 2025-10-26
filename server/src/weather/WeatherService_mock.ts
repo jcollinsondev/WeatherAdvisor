@@ -4,7 +4,7 @@ import { WeatherServiceRequest, DisplayWeather, HourlyResponse, DailyResponse } 
 import { IWeatherService } from "./WeatherService.ts";
 
 export const mock: IWeatherService = {
-  getCurrent: function (_req: WeatherServiceRequest): Promise<PossibleError<DisplayWeather>> {
+  getCurrent: function (_req: Pick<WeatherServiceRequest, "location">): Promise<PossibleError<DisplayWeather>> {
     const response: DisplayWeather = {
         weatherType: "sunny",
         description: "sunny",

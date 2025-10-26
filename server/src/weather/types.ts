@@ -66,7 +66,7 @@ export interface DailyData {
 }
 
 export interface WeatherServiceRequest {
-    location: Location;
+    location: Pick<Location, "lat" | "lon" | "timezone">;
     timeframe: Timeframe;
 }
 

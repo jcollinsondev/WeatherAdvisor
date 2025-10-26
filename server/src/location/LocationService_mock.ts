@@ -10,6 +10,9 @@ export const mock: ILocationService = {
                 name: "town",
                 lat: 0,
                 lon: 0,
+                elevation: 0,
+                country: "country",
+                timezone: "timezone",
             };
             resolve([{ results: [town] }, undefined]);
         });

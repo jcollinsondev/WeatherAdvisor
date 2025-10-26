@@ -14,6 +14,9 @@ export class GeocodingService implements ILocationService {
             name: location.name,
             lat: location.latitude,
             lon: location.longitude,
+            elevation: location.elevation,
+            country: location.country,
+            timezone: location.timezone,
         }));
 
         return [{ results }, undefined];

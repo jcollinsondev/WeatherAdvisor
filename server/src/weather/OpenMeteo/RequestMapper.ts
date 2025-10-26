@@ -4,34 +4,34 @@ import { OpenMeteoRequest } from "./types.ts";
 import { currentVariables, hourlyVariables } from "./ResponseMapper.ts";
 
 export class RequestMapper {
-    constructor(private req: WeatherServiceRequest) {}
+    constructor() {}
 
-    mapToCurrentRequest(): OpenMeteoRequest {
+    mapToCurrentRequest(req: Pick<WeatherServiceRequest, "location">): OpenMeteoRequest {
         return {
-            latitude: this.req.location.lat,
-            longitude: this.req.location.lon,
+            latitude: req.location.lat,
+            longitude: req.location.lon,
             current: currentVariables,
         }
     }
 
-    mapToHourlyRequest(): OpenMeteoRequest {
+    mapToHourlyRequest(req: WeatherServiceRequest): OpenMeteoRequest {
         return {
-            latitude: this.req.location.lat,
-            longitude: this.req.location.lon,
+            latitude: req.location.lat,
+            longitude: req.location.lon,
             hourly: hourlyVariables,
-            start_hour: this.req.timeframe.from.toISOString().slice(0, 16),
-            end_hour: this.req.timeframe.to.toISOString().slice(0, 16),
+            start_hour: req.timeframe.from.toISOString().slice(0, 16),
+            end_hour: req.timeframe.to.toISOString().slice(0, 16),
             timezone: "GMT",
         }
     }
 
-    mapToDailyRequest(): OpenMeteoRequest {
+    mapToDailyRequest(req: WeatherServiceRequest): OpenMeteoRequest {
         return {
-            latitude: this.req.location.lat,
-            longitude: this.req.location.lon,
+            latitude: req.location.lat,
+            longitude: req.location.lon,
             daily: ["temperature_2m_max", "apparent_temperature_min"],
-            start_date: this.req.timeframe.from.toISOString().slice(0, 10),
-            end_date: this.req.timeframe.to.toISOString().slice(0, 10),
+            start_date: req.timeframe.from.toISOString().slice(0, 10),
+            end_date: req.timeframe.to.toISOString().slice(0, 10),
             timezone: "GMT",
         }
     }

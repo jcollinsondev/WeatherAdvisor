@@ -3,8 +3,22 @@ import { assertEquals } from "assert";
 import { mock as weatherMock, WeatherServiceRequest } from "@weather";
 import { PromptGenerator } from "@llm";
 
+const mock_location = { 
+    name: "town", 
+    lat: 0, 
+    lon: 0,
+    elevation: 0,
+    country: "country",
+    timezone: "timezone",
+};
+
+const mock_timeframe = {
+    from: new Date(), 
+    to: new Date(),
+};
+
 Deno.test("Prompt generation hourly", async () => {
-    const mockRequest: WeatherServiceRequest = { location: { name: "town", lat: 0, lon: 0 }, timeframe: { from: new Date(), to: new Date() } };
+    const mockRequest: WeatherServiceRequest = { location: mock_location, timeframe: mock_timeframe };
     const [hourlyWeather] = await weatherMock.getHourly(mockRequest);
     
     const promptGenerator = new PromptGenerator("Should I dry my clothes outside today?");
@@ -28,7 +42,7 @@ Deno.test("Prompt generation hourly", async () => {
 });
 
 Deno.test("Prompt generation daily", async () => {
-    const mockRequest: WeatherServiceRequest = { location: { name: "town", lat: 0, lon: 0 }, timeframe: { from: new Date(), to: new Date() } };
+    const mockRequest: WeatherServiceRequest = { location: mock_location, timeframe: mock_timeframe };
     const [dailyWeather] = await weatherMock.getDaily(mockRequest);
     
     const promptGenerator = new PromptGenerator("Should I dry my clothes outside this weekend?");

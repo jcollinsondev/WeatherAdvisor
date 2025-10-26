@@ -6,27 +6,27 @@
 }
 
 html {
-    background: rgba(204, 217, 232, 1);
+    background: rgb(224, 231, 239);
 }
 
 body {
-    background: rgba(204, 217, 232, 1);
-    background: radial-gradient(circle,rgba(255, 235, 243, 1) 0%, rgba(204, 217, 232, 1) 100%);
+    background: rgb(224, 231, 239);
+    background: radial-gradient(circle,rgb(254, 248, 250) 0%, rgb(224, 231, 239) 100%);
     font-family: arial, sans-serif;
     font-size: 14px;
 }
 
 main {
-    display: grid;
-    place-items: center;
     min-height: 100vh;
-    padding: 1rem;
+    padding-inline: 1rem;
+    padding-block: 2rem;
 }
 
 .searchbar-anchor {
     position: relative;
     height: 2rem;
     width: min(100%, 48rem);
+    margin: auto;
 }
 
 .searchbar-container {
@@ -37,7 +37,7 @@ main {
     width: 100%;
     min-height: 1.6rem;
     border-radius: 1.6rem;
-    padding: 0.8rem;
+    overflow: hidden;
 }
 
 .searchbar { 
@@ -46,6 +46,7 @@ main {
     gap: 1rem;
     width: 100%;
     align-items: center;
+    padding: 0.8rem;
 }
 
 .searchbar-container:hover {
@@ -76,9 +77,20 @@ main {
 .searchbar-results {
     display: flex;
     flex-direction: column;
-    gap: 0.8rem;
-    padding-inline: 2.6rem;
-    padding-top: 1rem;
+}
+
+.searchbar-result-item {
+    padding-inline: 3.4rem;
+    padding-block: 0.8rem;
+    font-weight: 600;
+    cursor: default;
+    background: none;
+    border: none;
+    text-align: left;
+}
+
+.searchbar-result-item:hover {
+    background-color: #e9ebee;
 }
 
 .hidden {

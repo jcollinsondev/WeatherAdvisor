@@ -7,9 +7,9 @@ import { ApiCaller } from "./ApiCaller.ts";
 import { CurrentOpenMeteoResponse, DailyOpenMeteoResponse, HourlyOpenMeteoResponse } from "./types.ts";
 
 export class OpenMeteoService implements IWeatherService {
-    async getCurrent(req: WeatherServiceRequest): Promise<PossibleError<DisplayWeather>> {
-        const requestMapper = new RequestMapper(req);
-        const api = new ApiCaller<CurrentOpenMeteoResponse<CurrentVariables>>(requestMapper.mapToCurrentRequest());
+    async getCurrent(req: Pick<WeatherServiceRequest, "location">): Promise<PossibleError<DisplayWeather>> {
+        const requestMapper = new RequestMapper();
+        const api = new ApiCaller<CurrentOpenMeteoResponse<CurrentVariables>>(requestMapper.mapToCurrentRequest(req));
 
         const [response, error] = await api.call();
         if (error) return [undefined, error];
@@ -20,8 +20,8 @@ export class OpenMeteoService implements IWeatherService {
     }
     
     async getHourly(req: WeatherServiceRequest): Promise<PossibleError<HourlyResponse>> {
-        const requestMapper = new RequestMapper(req);
-        const api = new ApiCaller<HourlyOpenMeteoResponse<HourlyVariables>>(requestMapper.mapToHourlyRequest());
+        const requestMapper = new RequestMapper();
+        const api = new ApiCaller<HourlyOpenMeteoResponse<HourlyVariables>>(requestMapper.mapToHourlyRequest(req));
 
         const [response, error] = await api.call();
         if (error) return [undefined, error];
@@ -32,8 +32,8 @@ export class OpenMeteoService implements IWeatherService {
     }
 
     async getDaily(req: WeatherServiceRequest): Promise<PossibleError<DailyResponse>> {
-        const requestMapper = new RequestMapper(req);
-        const api = new ApiCaller<DailyOpenMeteoResponse<DailyVariables>>(requestMapper.mapToDailyRequest());
+        const requestMapper = new RequestMapper();
+        const api = new ApiCaller<DailyOpenMeteoResponse<DailyVariables>>(requestMapper.mapToDailyRequest(req));
 
         const [response, error] = await api.call();
         if (error) return [undefined, error];
