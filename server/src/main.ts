@@ -7,15 +7,19 @@ const port = Deno.env.get("PORT") ?? "8080";
 
 const router = new Router();
 
-router.get("/location/search", async () => {
+router.get("/location/search", async ({ searchParams }) => {
+    const name = searchParams.get("name");
+    if (!name) return new Response("name missing.", { status: 400 });
+
     const geocoding = new GeocodingService();
-    const [response, error] = await geocoding.search("lenno");
+    const [response, error] = await geocoding.search(name);
 
     if (error) return new Response(error.message, { status: error.code });
     return new Response(JSON.stringify(response), {
         status: 200,
         headers: {
             "content-type": "application/json; charset=utf-8",
+            "Access-Control-Allow-Origin": "*",
         },
     });
 });
@@ -39,6 +43,7 @@ router.get("/current", async () => {
         status: 200,
         headers: {
             "content-type": "application/json; charset=utf-8",
+            "Access-Control-Allow-Origin": "*",
         },
     });
 });

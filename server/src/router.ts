@@ -23,16 +23,17 @@ export class Router {
         const method = request.method;
         const url = new URL(request.url);
         const pathname = url.pathname;
+        const handlerParam = { request, searchParams: url.searchParams };
 
-        if (!this.handlers.has(method)) return await this.notFoundHandler(request);
+        if (!this.handlers.has(method)) return await this.notFoundHandler(handlerParam);
 
         const methodHandlers = this.handlers.get(method);
-        if (!methodHandlers || !methodHandlers.has(pathname)) return await this.notFoundHandler(request);
+        if (!methodHandlers || !methodHandlers.has(pathname)) return await this.notFoundHandler(handlerParam);
 
         const handler = methodHandlers.get(pathname);
 
-        if (!handler) return await this.notFoundHandler(request);
-        return await handler(request)
+        if (!handler) return await this.notFoundHandler(handlerParam);
+        return await handler(handlerParam)
     }
 
     private notFoundHandler: RequestHandler = () => {
@@ -48,4 +49,4 @@ export class Router {
     }
 }
 
-type RequestHandler = (request: Request) => Promise<Response>
+type RequestHandler = ({ request, searchParams }: { request: Request, searchParams: URLSearchParams }) => Promise<Response>

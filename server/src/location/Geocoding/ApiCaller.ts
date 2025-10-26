@@ -26,8 +26,13 @@ export class ApiCaller {
             const error: Error = { code: response.status, message: response.statusText };
             return [undefined, error];
         }
+
+        const json = await response.json();
+        if (!json.results) {
+            return [{ results: [] }, undefined];
+        }
         
-        const data: GeocodingResponse = await response.json()
+        const data: GeocodingResponse = json;
         return [data, undefined];
     }
 }

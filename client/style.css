@@ -34,14 +34,15 @@ main {
     background: white;
     border: 1px solid #dfe1e5;
     box-shadow: none;
-    border-radius: 999px;
     width: 100%;
+    min-height: 1.6rem;
+    border-radius: 1.6rem;
+    padding: 0.8rem;
 }
 
 .searchbar { 
     color: #202124;
     display: flex;
-    padding: 0.8rem;
     gap: 1rem;
     width: 100%;
     align-items: center;
@@ -70,4 +71,16 @@ main {
     max-width: 100%;
     width: 100%;
     font-size: 1rem;
+}
+
+.searchbar-results {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    padding-inline: 2.6rem;
+    padding-top: 1rem;
+}
+
+.hidden {
+    display: none;
 }

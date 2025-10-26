@@ -1,0 +1,21 @@
+services:
+  server:
+    build: ./server
+    volumes:
+      - .:/server
+    ports:
+      - "8080:8080"
+    container_name: server
+    restart: always
+    environment:
+      - PORT=8080
+    command: ["deno", "run", "--watch", "--allow-net", "--allow-env", "--allow-read", "./src/main.ts"]
+
+  client:
+    build: ./client
+    volumes:
+      - .:/client
+    ports:
+      - "80:80"
+    container_name: client
+    restart: always
