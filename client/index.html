@@ -4,8 +4,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Weather Advisor</title>
+
+    <link rel="stylesheet" href="style.css">
+    <script src="index.js"></script>
 </head>
 <body>
-    <h1>Hello World</h1>
+    <main>
+        <div class="searchbar-anchor">
+            <div class="searchbar-container">
+                <div class="searchbar">
+                    <img
+                        class="search-icon"
+                        src="icons/ui/search.svg"
+                        alt="search lens"
+                    />
+                    <input 
+                        type="text" 
+                        class="searchbar-input" 
+                        maxlength="2048" 
+                        name="search-location" 
+                        autocapitalize="off" 
+                        autocomplete="off" 
+                        title="Search" 
+                        role="combobox" 
+                        placeholder="Search Location"
+                    />
+                </div>
+            </div>
+            
+        </div>
+    </main>
 </body>
 </html>

@@ -1,0 +1,73 @@
+*,
+*::after,
+*::before {
+    box-sizing: border-box;
+    margin: 0;
+}
+
+html {
+    background: rgba(204, 217, 232, 1);
+}
+
+body {
+    background: rgba(204, 217, 232, 1);
+    background: radial-gradient(circle,rgba(255, 235, 243, 1) 0%, rgba(204, 217, 232, 1) 100%);
+    font-family: arial, sans-serif;
+    font-size: 14px;
+}
+
+main {
+    display: grid;
+    place-items: center;
+    min-height: 100vh;
+    padding: 1rem;
+}
+
+.searchbar-anchor {
+    position: relative;
+    height: 2rem;
+    width: min(100%, 48rem);
+}
+
+.searchbar-container {
+    position: absolute;
+    background: white;
+    border: 1px solid #dfe1e5;
+    box-shadow: none;
+    border-radius: 999px;
+    width: 100%;
+}
+
+.searchbar { 
+    color: #202124;
+    display: flex;
+    padding: 0.8rem;
+    gap: 1rem;
+    width: 100%;
+    align-items: center;
+}
+
+.searchbar-container:hover {
+    box-shadow: 0 1px 6px rgb(32 33 36 / 28%);
+    border-color: rgba(223,225,229,0);
+}
+
+.search-icon {
+    margin-top: 3px;
+    height: 1.6rem;
+    width: 1.6rem;
+    padding-bottom: 4px;
+}
+
+.searchbar-input {
+    background-color: transparent;
+    border: none;
+    margin: 0;
+    padding: 0;
+    color: rgba(0, 0, 0, .87);
+    word-wrap: break-word;
+    outline: none;
+    max-width: 100%;
+    width: 100%;
+    font-size: 1rem;
+}
