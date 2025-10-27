@@ -1,7 +1,9 @@
 import { OpenMeteoService } from "@OpenMeteo";
 import { GeocodingService } from "@Geocoding";
+import { AddLocationRequest, LocationsTable } from "@location";
 
 import { Router } from "./router.ts"
+import { DbService } from "@db";
 
 const port = Deno.env.get("PORT") ?? "8080";
 
@@ -44,6 +46,39 @@ router.get("/api/weather/current", async ({ searchParams }) => {
             timezone,
         },
     });
+
+    if (error) return new Response(error.message, { status: error.code, headers: { "Access-Control-Allow-Origin": "*" } });
+    return new Response(JSON.stringify(response), {
+        status: 200,
+        headers: {
+            "content-type": "application/json; charset=utf-8",
+            "Access-Control-Allow-Origin": "*",
+        },
+    });
+});
+
+router.post("/api/location/save", async ({ request }) => {
+    let body: AddLocationRequest;
+    try {
+        body = await request.json();
+    } catch {
+        return new Response("Invalid JSON body.", { status: 400, headers: { "Access-Control-Allow-Origin": "*" } });
+    }
+
+    const db = new DbService();
+    const locations = new LocationsTable(db);
+
+    const error = await locations.add(body);
+
+    if (error) return new Response(error.message, { status: error.code, headers: { "Access-Control-Allow-Origin": "*" } });
+    return new Response(null, { status: 200, headers: { "Access-Control-Allow-Origin": "*" } });
+});
+
+router.get("/api/location/list", async () => {
+    const db = new DbService();
+    const locations = new LocationsTable(db);
+
+    const [response, error] = await locations.list();
 
     if (error) return new Response(error.message, { status: error.code, headers: { "Access-Control-Allow-Origin": "*" } });
     return new Response(JSON.stringify(response), {

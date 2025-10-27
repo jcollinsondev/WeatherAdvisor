@@ -1,21 +1,31 @@
 services:
-  server:
-    build: ./server
-    volumes:
-      - .:/server
-    ports:
-      - "8080:8080"
-    container_name: server
-    restart: always
-    environment:
-      - PORT=8080
-    command: ["deno", "run", "--watch", "--allow-net", "--allow-env", "--allow-read", "./src/main.ts"]
+    server:
+        build: ./server
+        volumes:
+            - .:/server
+        ports:
+            - "8080:8080"
+        container_name: server
+        restart: always
+        environment:
+            - PORT=8080
+        command: ["deno", "run", "--watch", "--allow-net", "--allow-env", "--allow-read", "./src/main.ts"]
 
-  client:
-    build: ./client
-    volumes:
-      - .:/client
-    ports:
-      - "80:80"
-    container_name: client
-    restart: always
+    client:
+        build: ./client
+        volumes:
+            - .:/client
+        ports:
+            - "80:80"
+        container_name: client
+        restart: always
+
+    db:
+        image: postgres:14.19-alpine3.21
+        restart: always
+        environment:
+            POSTGRES_USER: root
+            POSTGRES_PASSWORD: secret_password
+            POSTGRES_DB: weatheradvisor
+        volumes:
+            - ./init-scripts:/docker-entrypoint-initdb.d

@@ -10,3 +10,7 @@ export interface Location {
 export interface LocationResponse {
     results: Location[];
 }
+
+export interface AddLocationRequest {
+    location: Location;
+}

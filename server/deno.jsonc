@@ -1,7 +1,9 @@
 {
     "imports": {
         "assert": "https://deno.land/std@0.198.0/assert/mod.ts",
+        "postgres": "jsr:@db/postgres",
         "@utils": "./src/utils/index.ts",
+        "@db": "./src/db/index.ts",
         "@weather": "./src/weather/index.ts",
         "@llm": "./src/llm/index.ts",
         "@location": "./src/location/index.ts",
