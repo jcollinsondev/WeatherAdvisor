@@ -31,7 +31,7 @@ export const weatherCodeMap: Record<number, string> = {
     99: "Thunderstorm with heavy hail",
 };
 
-export const weatherTypeMap: Record<number, WeatherType> = {
+export const weatherTypeMapDay: Record<number, WeatherType> = {
     0: "sunny",
     1: "partly-cloudy",
     2: "cloudy-clear",
@@ -60,6 +60,46 @@ export const weatherTypeMap: Record<number, WeatherType> = {
     77: "snow",
 
     80: "scatterad-showers",
+    81: "rain",
+    82: "heavy-rain",
+
+    85: "snow",
+    86: "blizzard",
+
+    95: "scatterad-thunderstorm",
+    96: "rain-thunderstorm",
+    99: "sever-thunderstorm",
+};
+
+export const weatherTypeMapNight: Record<number, WeatherType> = {
+    0: "clear-night",
+    1: "partly-cloudy-night",
+    2: "cloudy-clear-night",
+    3: "cloudy",
+
+    45: "fog",
+    48: "fog",
+
+    51: "drizzle",
+    53: "drizzle",
+    55: "drizzle",
+    56: "sleet",
+    57: "sleet",
+
+    61: "rain",
+    63: "rain-night",
+    65: "heavy-rain",
+
+    66: "sleet",
+    67: "sleet",
+
+    71: "snow",
+    73: "snow",
+    75: "blizzard",
+
+    77: "snow",
+
+    80: "scatterad-showers-night",
     81: "rain",
     82: "heavy-rain",
 

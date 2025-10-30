@@ -18,15 +18,21 @@ body {
 
 main {
     min-height: 100vh;
+}
+
+#home {
+    width: min(100%, 48rem);
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
     padding-inline: 1rem;
     padding-block: 2rem;
 }
 
 .searchbar-anchor {
     position: relative;
-    height: 2rem;
-    width: min(100%, 48rem);
-    margin: auto;
+    height: 3.5rem;
 }
 
 .searchbar-container {
@@ -91,6 +97,82 @@ main {
 
 .searchbar-result-item:hover {
     background-color: #e9ebee;
+}
+
+#locations {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+@media screen and (max-width: 48rem) {
+    #locations {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+}
+
+.location-card {
+    padding: 1.6rem;
+    background: white;
+    border: 1px solid #dfe1e5;
+    box-shadow: none;
+    width: 100%;
+    border-radius: 1.6rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.location-card-content {
+    display: grid;
+    gap: 2rem;
+    align-items: center;
+    grid-template-columns: auto auto 1fr;
+}
+
+.location-card-title {
+    grid-area: title;
+}
+
+.location-card-temperature {
+    font-size: 3rem;
+    font-weight: 200;
+}
+
+.location-card-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.location-card-weather-icon {
+    width: 6rem;
+    height: 6rem;
+}
+
+.location-card-weather-data-value {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.location-card-weather-data-icon {
+    width: 1rem;
+    height: 1rem;
+}
+
+.location-card-chat-link {
+    padding: 0.6rem 1rem;
+    border: none;
+    outline: none;
+    background: rgb(27, 174, 204);
+    color: #eee;
+    border-radius: 999rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s ease-out;
 }
 
 .hidden {

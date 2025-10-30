@@ -1,7 +1,7 @@
 import { DailyResponse, DisplayWeather, HourlyResponse } from "@weather";
 
 import { CurrentOpenMeteoResponse, DailyOpenMeteoResponse, HourlyOpenMeteoResponse } from "./types.ts";
-import { weatherCodeMap, weatherTypeMap } from "./codes.ts";
+import { weatherCodeMap, weatherTypeMapNight, weatherTypeMapDay } from "./codes.ts";
 import { CurrentWeatherVariable, DailyWeatherVariable, HourlyWeatherVariable } from "./variables.ts";
 
 export const currentVariables = [
@@ -9,6 +9,7 @@ export const currentVariables = [
     "weather_code",
     "relative_humidity_2m",
     "wind_speed_10m",
+    "is_day",
 ] satisfies CurrentWeatherVariable[];
 export type CurrentVariables = typeof currentVariables;
 
@@ -43,7 +44,7 @@ export type DailyVariables = typeof dailyVariables;
 export class ResponseMapper {
     mapFromCurrentResponse(res: CurrentOpenMeteoResponse<CurrentVariables>): DisplayWeather {
         return {
-            weatherType: weatherTypeMap[res.current.weather_code],
+            weatherType: res.current.is_day ? weatherTypeMapDay[res.current.weather_code] : weatherTypeMapNight[res.current.weather_code],
             description: weatherCodeMap[res.current.weather_code],
             temp: res.current.temperature_2m,
             humidity: res.current.relative_humidity_2m,

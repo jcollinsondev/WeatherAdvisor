@@ -9,32 +9,38 @@
 </head>
 <body>
     <main>
-        <div class="searchbar-anchor">
-            <div class="searchbar-container">
-                <div class="searchbar">
-                    <img
-                        class="search-icon"
-                        src="icons/ui/search.svg"
-                        alt="search lens"
-                    />
-                    <input 
-                        type="text" 
-                        class="searchbar-input" 
-                        maxlength="2048" 
-                        name="search-location" 
-                        autocapitalize="off" 
-                        autocomplete="off" 
-                        title="Search" 
-                        role="combobox" 
-                        placeholder="Search Location"
-                    />
+        <section id="home">
+            <div class="searchbar-anchor">
+                <div class="searchbar-container">
+                    <div class="searchbar">
+                        <img
+                            class="search-icon"
+                            src="icons/ui/search.svg"
+                            alt="search lens"
+                        />
+                        <input 
+                            type="text" 
+                            class="searchbar-input" 
+                            maxlength="2048" 
+                            name="search-location" 
+                            autocapitalize="off" 
+                            autocomplete="off" 
+                            title="Search" 
+                            role="combobox" 
+                            placeholder="Search Location"
+                        />
+                    </div>
+                    <div class="searchbar-results hidden"></div>
                 </div>
-                <div class="searchbar-results hidden"></div>
+                
             </div>
-            
-        </div>
 
-        <div id="locations"></div>
+            <div id="locations"></div>
+        </section>
+        
+        <section id="chat">
+
+        </section>
     </main>
 
     <script src="index.js"></script>
