@@ -36,6 +36,10 @@
                 </div>
             </div>
 
+            <div class="select-location-banner">
+                Select a location to start chatting.
+            </div>
+
             <div id="chat-header" class="location-card hidden">
                 <h4 class="location-card-title"></h4>
                 <div class="location-card-content">
@@ -57,9 +61,25 @@
             <div id="messages"></div>
         </section>
 
-        <section id="input">
+        <section id="input" class="hidden">
+            <div class="timeframe-input">
+                <label>
+                    <input type="radio" id="radio-today" name="timeframe-radio" value="today" checked>
+                    <span>Today</span>
+                </label>
+                <label>
+                    <input type="radio" id="radio-week" name="timeframe-radio" value="week">
+                    <span>This Week</span>
+                </label>
+                <label>
+                    <input type="radio" id="radio-weekend" name="timeframe-radio" value="weekend">
+                    <span>This Weekend</span>
+                </label>
+            </div>
+
             <div class="chat-input-container">
                 <input 
+                    id="chat-input"
                     type="text" 
                     class="chat-input" 
                     maxlength="2048" 
@@ -69,6 +89,10 @@
                     title="Chat" 
                     placeholder="Ask Anything"
                 />
+
+                <button id="chat-input-button" class="chat-send">
+                    <img src="icons/ui/send.svg" />
+                </button>
             </div>
         </section>
     </main>

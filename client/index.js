@@ -1,13 +1,23 @@
 const apiURL = "http://localhost:8080/api";
 
 const searchbarInput = document.querySelector(".searchbar-input");
+const banner = document.querySelector(".select-location-banner");
 const searchSuggestions = document.querySelector("#search-suggestions");
 const searchHistory = document.querySelector("#search-history");
 const chatHeader = document.querySelector("#chat-header");
+const chatInputSection = document.querySelector("#input");
+const chatInput = document.querySelector("#chat-input");
+const chatInputButton = document.querySelector("#chat-input-button");
+const messages = document.querySelector("#messages");
 
 searchbarInput.addEventListener("input", locationSearch);
 searchbarInput.addEventListener("focusout", hideSearchResults);
 searchbarInput.addEventListener("focusin", showSearchResults);
+
+chatInputButton.addEventListener("click", askQuestion);
+chatInput.addEventListener("keypress", ({ key }) => {
+    if (key === 'Enter') askQuestion();
+});
 
 addEventListener("load", loadSavedLocations);
 
@@ -95,6 +105,8 @@ function selectLocation(location, save) {
 async function insertLocation(location) {
     const currentWeather = await fetchCurrentWeather(location);
 
+    banner.classList.add("hidden");
+    chatInputSection.classList.remove("hidden");
     chatHeader.classList.remove("hidden");
 
     const title = chatHeader.querySelector(".location-card-title");
@@ -132,4 +144,30 @@ async function fetchSavedLocations() {
     if (!response.ok) return;
 
     return await response.json();
+}
+
+function askQuestion() {
+    const waitingResponse = chatInput.getAttribute("waiting");
+    if (waitingResponse) return;
+
+    const question = chatInput.value;
+    if (!question) return;
+
+    addMessage(question);
+    chatInput.value = "";
+
+    chatInput.setAttribute("waiting", true);
+    chatInputButton.setAttribute("waiting", true);
+}
+
+function addMessage(question) {
+    const message = document.createElement("div");
+    message.classList.add("chat-message");
+
+    const text = document.createElement("div");
+    text.classList.add("chat-message-text");
+    text.innerHTML = question;
+
+    message.append(text);
+    messages.append(message);
 }
