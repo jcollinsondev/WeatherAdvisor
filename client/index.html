@@ -9,7 +9,7 @@
 </head>
 <body>
     <main>
-        <section id="home">
+        <section id="location">
             <div class="searchbar-anchor">
                 <div class="searchbar-container">
                     <div class="searchbar">
@@ -30,16 +30,46 @@
                             placeholder="Search Location"
                         />
                     </div>
-                    <div class="searchbar-results hidden"></div>
+
+                    <div id="search-history" class="searchbar-results hidden"></div>
+                    <div id="search-suggestions" class="searchbar-results hidden"></div>
                 </div>
-                
             </div>
 
-            <div id="locations"></div>
+            <div id="chat-header" class="location-card hidden">
+                <h4 class="location-card-title"></h4>
+                <div class="location-card-content">
+                    <img class="location-card-weather-icon"/>
+                    <div class="location-card-info">
+                        <h1 class="location-card-temperature"></h1>
+                        <div class="location-card-weather-data-value">
+                            <img class="location-card-weather-data-icon" src="icons/weather/humidity.svg"><span class="location-card-weather-data-humidity"></span>
+                        </div>
+                        <div class="location-card-weather-data-value">
+                            <img class="location-card-weather-data-icon" src="icons/weather/wind.svg"><span class="location-card-weather-data-wind"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </section>
         
         <section id="chat">
+            <div id="messages"></div>
+        </section>
 
+        <section id="input">
+            <div class="chat-input-container">
+                <input 
+                    type="text" 
+                    class="chat-input" 
+                    maxlength="2048" 
+                    name="search-location" 
+                    autocapitalize="off" 
+                    autocomplete="off" 
+                    title="Chat" 
+                    placeholder="Ask Anything"
+                />
+            </div>
         </section>
     </main>
 

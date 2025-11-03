@@ -1,8 +1,9 @@
 const apiURL = "http://localhost:8080/api";
 
 const searchbarInput = document.querySelector(".searchbar-input");
-const searchbarResults = document.querySelector(".searchbar-results");
-const locationsContainer = document.querySelector("#locations");
+const searchSuggestions = document.querySelector("#search-suggestions");
+const searchHistory = document.querySelector("#search-history");
+const chatHeader = document.querySelector("#chat-header");
 
 searchbarInput.addEventListener("input", locationSearch);
 searchbarInput.addEventListener("focusout", hideSearchResults);
@@ -14,14 +15,16 @@ async function loadSavedLocations() {
     const locations = await fetchSavedLocations();
     if (!locations) return;
 
-    locations.forEach(insertLocation);
+    locations.forEach(addToSearchHistory);
 }
 
 async function locationSearch(event) {
+    searchHistory.classList.add("hidden");
+
     const searchText = event.target.value;
     if (searchText.length < 2) {
-        searchbarResults.innerHTML = "";
-        searchbarResults.classList.add("hidden");
+        searchSuggestions.innerHTML = "";
+        searchSuggestions.classList.add("hidden");
         return;
     };
     
@@ -31,106 +34,83 @@ async function locationSearch(event) {
     const json = await response.json();
 
     if (!json.results || json.results.length === 0) {
-        searchbarResults.innerHTML = "";
-        searchbarResults.classList.add("hidden");
+        searchSuggestions.innerHTML = "";
+        searchSuggestions.classList.add("hidden");
         return;
     }
 
-    searchbarResults.classList.remove("hidden");
-    searchbarResults.innerHTML = "";
+    searchSuggestions.classList.remove("hidden");
+    searchSuggestions.innerHTML = "";
     json.results.forEach(location => {
         const resultItem = document.createElement("button");
         resultItem.className = "searchbar-result-item";
         resultItem.innerHTML = `${location.name}, ${location.country}`;
-        resultItem.addEventListener("click", () => selectLocation(location));
-        searchbarResults.append(resultItem);
+        resultItem.addEventListener("click", () => selectLocation(location, true));
+        searchSuggestions.append(resultItem);
     });
 }
 
+function addToSearchHistory(location) {
+    const historyItem = document.createElement("button");
+    historyItem.className = "searchbar-history-item";
+
+    const historyItemIcon = document.createElement("img");
+    historyItemIcon.classList.add("searchbar-history-item-icon");
+    historyItemIcon.setAttribute("src", `icons/ui/clock-rewind.svg`);
+
+    const historyItemSpan = document.createElement("span");
+    historyItemSpan.innerHTML = `${location.name}, ${location.country}`;
+
+    historyItem.addEventListener("click", () => selectLocation(location, false));
+
+    historyItem.append(historyItemIcon);
+    historyItem.append(historyItemSpan);
+    searchHistory.append(historyItem);
+}
+
 function hideSearchResults(event) {
-    if (searchbarResults.contains(event.relatedTarget)) return;
-    searchbarResults.classList.add("hidden");
+    if (searchSuggestions.contains(event.relatedTarget)) return;
+    if (searchHistory.contains(event.relatedTarget)) return;
+    searchHistory.classList.add("hidden");
+    searchSuggestions.classList.add("hidden");
 }
 
 function showSearchResults(event) {
     const searchText = event.target.value;
-    if (searchText.length < 2) return;
-
-    searchbarResults.classList.remove("hidden");
+    if (searchText.length < 2) {
+        searchHistory.classList.remove("hidden");
+    } else {
+        searchSuggestions.classList.remove("hidden");
+    }
 }
 
-function selectLocation(location) {
-    searchbarResults.classList.add("hidden");
+function selectLocation(location, save) {
+    searchSuggestions.classList.add("hidden");
+    searchHistory.classList.add("hidden");
     searchbarInput.value = "";
     insertLocation(location);
-    saveLocation(location);
+    if (save) saveLocation(location);
 }
 
 async function insertLocation(location) {
     const currentWeather = await fetchCurrentWeather(location);
 
-    const card = document.createElement("div");
-    card.classList.add("location-card");
-    card.classList.add(currentWeather.weatherType);
+    chatHeader.classList.remove("hidden");
 
-    const title = document.createElement("h4");
-    title.classList.add("location-card-title");
+    const title = chatHeader.querySelector(".location-card-title");
     title.innerHTML = `${location.name}, ${location.country}`;
 
-    
-
-    const info = document.createElement("div");
-    info.classList.add("location-card-info");
-
-    const temperature = document.createElement("h1");
-    temperature.classList.add("location-card-temperature");
+    const temperature = chatHeader.querySelector(".location-card-temperature");
     temperature.innerHTML = `${Math.round(currentWeather.temp)}°`;
 
-    const humidityData = document.createElement("div");
-    humidityData.classList.add("location-card-weather-data-value");
+    const humidity = chatHeader.querySelector(".location-card-weather-data-humidity");
+    humidity.innerHTML = `${currentWeather.humidity}%`;
 
-    const humidityIcon = document.createElement("img");
-    humidityIcon.classList.add("location-card-weather-data-icon");
-    humidityIcon.setAttribute("src", `icons/weather/humidity.svg`);
+    const wind = chatHeader.querySelector(".location-card-weather-data-wind");
+    wind.innerHTML = `${currentWeather.wind} km/h`;
 
-    const humidityValue = document.createElement("span");
-    humidityValue.innerHTML = `${currentWeather.humidity}%`;
-
-    const windData = document.createElement("div");
-    windData.classList.add("location-card-weather-data-value");
-
-    const windIcon = document.createElement("img");
-    windIcon.classList.add("location-card-weather-data-icon");
-    windIcon.setAttribute("src", `icons/weather/wind.svg`);
-
-    const windValue = document.createElement("span");
-    windValue.innerHTML = `${currentWeather.wind} km/h`;
-
-    const icon = document.createElement("img");
-    icon.classList.add("location-card-weather-icon");
+    const icon = chatHeader.querySelector(".location-card-weather-icon");
     icon.setAttribute("src", `icons/weather/${currentWeather.weatherType}.svg`);
-
-    const content = document.createElement("div");
-    content.classList.add("location-card-content");
-
-    const chatLink = document.createElement("button");
-    chatLink.classList.add("location-card-chat-link");
-    chatLink.innerHTML = "Start a Chat";
-    
-    card.append(title);
-    humidityData.append(humidityIcon);
-    humidityData.append(humidityValue);
-    windData.append(windIcon);
-    windData.append(windValue);
-    info.append(temperature);
-    info.append(humidityData);
-    info.append(windData);
-    content.append(icon);
-    content.append(info);
-    card.append(content);
-    card.append(chatLink);
-    
-    locationsContainer.append(card);
 }
 
 async function fetchCurrentWeather(location) {
