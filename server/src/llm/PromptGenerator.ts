@@ -46,7 +46,7 @@ export class PromptGenerator {
         }`);
 
         return `${this.question} Given the following weather data: [${dataStrings.join(",")}]. 
-            Responde suggesting the best times of the day if there is at least one.`;
+            Responde suggesting the best times of the day if there is at least one. Keep the answer short.`;
     }
 
     private generatePromptForDailyData(data: DailyResponse): string {
@@ -66,6 +66,6 @@ export class PromptGenerator {
         }`);
 
         return `${this.question} Given the following weather data: [${dataStrings.join(",")}]. 
-            Responde suggesting the best days if there is at least one.`;
+            Responde suggesting the best days if there is at least one. Keep the answer short.`;
     }
 }

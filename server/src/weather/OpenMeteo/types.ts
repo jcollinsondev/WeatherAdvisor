@@ -23,17 +23,17 @@ export type CurrentOpenMeteoResponse<Variables extends readonly CurrentWeatherVa
 
 export type HourlyOpenMeteoResponse<Variables extends readonly HourlyWeatherVariable[]> = OpenMeteoResponseBase & {
     hourly_units: HourlyUnits<Variables>;
-    hourly: Times;
-} & {
-    [key in Variables[number]]: number[];
-}
+    hourly: Times & {
+        [key in Variables[number]]: number[];
+    };
+};
 
 export type DailyOpenMeteoResponse<Variables extends readonly DailyWeatherVariable[]> = OpenMeteoResponseBase & {
     daily_units: DailyUnits<Variables>;
-    daily: Times;
-} & {
-    [key in Variables[number]]: number[];
-}
+    daily: Times & {
+        [key in Variables[number]]: number[];
+    };
+};
 
 type OpenMeteoResponseBase = {
     latitude: number;
@@ -51,7 +51,7 @@ export interface OpenMeteoError {
 }
 
 type Times = {
-    time: [Date]
+    time: [string]
 }
 
 type CurrentUnits<Variables extends readonly CurrentWeatherVariable[]> = {
@@ -62,7 +62,7 @@ type CurrentUnits<Variables extends readonly CurrentWeatherVariable[]> = {
 }
 
 type Current<Variables extends readonly CurrentWeatherVariable[]> = {
-    time: Date;
+    time: string;
     interval: number;
 } & {
     [key in Variables[number]]: number;

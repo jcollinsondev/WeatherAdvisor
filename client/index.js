@@ -1,5 +1,7 @@
 const apiURL = "http://localhost:8080/api";
 
+let currentLocation = undefined;
+
 const searchbarInput = document.querySelector(".searchbar-input");
 const banner = document.querySelector(".select-location-banner");
 const searchSuggestions = document.querySelector("#search-suggestions");
@@ -14,9 +16,9 @@ searchbarInput.addEventListener("input", locationSearch);
 searchbarInput.addEventListener("focusout", hideSearchResults);
 searchbarInput.addEventListener("focusin", showSearchResults);
 
-chatInputButton.addEventListener("click", askQuestion);
+chatInputButton.addEventListener("click", sendMessage);
 chatInput.addEventListener("keypress", ({ key }) => {
-    if (key === 'Enter') askQuestion();
+    if (key === 'Enter') sendMessage();
 });
 
 addEventListener("load", loadSavedLocations);
@@ -95,6 +97,7 @@ function showSearchResults(event) {
 }
 
 function selectLocation(location, save) {
+    currentLocation = location;
     searchSuggestions.classList.add("hidden");
     searchHistory.classList.add("hidden");
     searchbarInput.value = "";
@@ -146,18 +149,20 @@ async function fetchSavedLocations() {
     return await response.json();
 }
 
-function askQuestion() {
+function sendMessage() {
     const waitingResponse = chatInput.getAttribute("waiting");
-    if (waitingResponse) return;
+    if (waitingResponse === true) return;
 
     const question = chatInput.value;
     if (!question) return;
 
-    addMessage(question);
+    const responseText = addMessage(question);
     chatInput.value = "";
 
     chatInput.setAttribute("waiting", true);
     chatInputButton.setAttribute("waiting", true);
+
+    askQuestion(question, responseText);
 }
 
 function addMessage(question) {
@@ -168,6 +173,108 @@ function addMessage(question) {
     text.classList.add("chat-message-text");
     text.innerHTML = question;
 
+    const response = document.createElement("div");
+    response.classList.add("chat-response");
+
+    const responseText = document.createElement("div");
+    responseText.classList.add("chat-response-text");
+    responseText.innerHTML = "Thinking...";
+
     message.append(text);
     messages.append(message);
+    response.append(responseText);
+    messages.append(response);
+
+    return responseText;
+}
+
+async function askQuestion(question, responseText) {
+    if (!currentLocation) return;
+
+    const [timeframe, dataType] = calculateTimeframe();
+
+    const response = await fetch(`${apiURL}/llm/ask`, {
+        method: "POST",
+        body: JSON.stringify({ 
+            question,
+            location: currentLocation,
+            timeframe,
+            dataType,
+        }),
+    });
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder('utf-8');
+
+    responseText.innerHTML = "";
+    const { done, value } = await reader.read();
+
+    try {
+        await read(reader, decoder, responseText, done, value);
+    } finally {
+        chatInput.setAttribute("waiting", false);
+        chatInputButton.setAttribute("waiting", false);
+    }
+}
+
+function calculateTimeframe() {
+    const radioValue = document.querySelector('input[name="timeframe-radio"]:checked').value;
+
+    if (radioValue === "today") {
+        const timeframe = {
+            from: new Date(),
+            to: new Date(new Date().setHours(24, 0, 0, 0)),
+        };
+        const dataType = "hourly";
+
+        return [timeframe, dataType];
+    }
+
+    if (radioValue === "week") {
+        const timeframe = {
+            from: new Date(),
+            to: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        };
+        const dataType = "daily";
+
+        return [timeframe, dataType];
+    }
+
+    if (radioValue === "weekend") {
+        const now = new Date();
+        const day = now.getDay();
+
+        const daysUntilSaturday = (6 - day + 7) % 7 || 7;
+
+        const from = new Date(now);
+        from.setDate(now.getDate() + daysUntilSaturday);
+        from.setHours(0, 0, 0, 0);
+
+        const to = new Date(from);
+        to.setDate(from.getDate() + 1);
+        to.setHours(23, 59, 59, 999);
+
+        const timeframe = { from, to };
+        const dataType = "daily";
+
+        return [timeframe, dataType];
+    }
+}
+
+async function read(reader, decoder, responseText, done, value) {
+    if (done) {
+        return;
+    }
+
+    const chunk = decoder.decode(value, { stream: true });
+
+    for (const line of chunk.split("\n")) {
+        if (!line.trim()) continue;
+        const json = JSON.parse(line);
+        const text = document.createTextNode(json.response);
+        responseText.append(text);
+    }
+
+    const readResponse = await reader.read();
+    read(reader, decoder, responseText, readResponse.done, readResponse.value);
 }

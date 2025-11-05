@@ -55,17 +55,17 @@ export class ResponseMapper {
     mapFromHourlyResponse(res: HourlyOpenMeteoResponse<HourlyVariables>): HourlyResponse {
         return {
             hours: res.hourly.time.map((date, index) => ({
-                hour: date.getHours(),
+                hour: new Date(date).getHours(),
                 data: {
-                    temp: res.temperature_2m[index],
-                    feelsLike: res.apparent_temperature[index],
-                    humidity: res.relative_humidity_2m[index],
-                    uvi: res.uv_index[index],
-                    clouds: res.cloud_cover[index],
-                    visibility: res.visibility[index],
-                    wind: res.wind_speed_10m[index],
-                    rain: res.rain[index],
-                    snow: res.snowfall[index],
+                    temp: res.hourly.temperature_2m[index],
+                    feelsLike: res.hourly.apparent_temperature[index],
+                    humidity: res.hourly.relative_humidity_2m[index],
+                    uvi: res.hourly.uv_index[index],
+                    clouds: res.hourly.cloud_cover[index],
+                    visibility: res.hourly.visibility[index],
+                    wind: res.hourly.wind_speed_10m[index],
+                    rain: res.hourly.rain[index],
+                    snow: res.hourly.snowfall[index],
                 },
             })),
         }
@@ -74,17 +74,17 @@ export class ResponseMapper {
     mapFromDailyResponse(res: DailyOpenMeteoResponse<DailyVariables>): DailyResponse {
         return {
             days: res.daily.time.map((date, index) => ({
-                day: date,
+                day: new Date(date),
                 data: {
-                    temp: res.temperature_2m_max[index],
-                    feelsLike: res.apparent_temperature_max[index],
-                    humidity: res.relative_humidity_2m_mean[index],
-                    uvi: res.uv_index_max[index],
-                    clouds: res.cloud_cover_mean[index],
-                    visibility: res.visibility_mean[index],
-                    wind: res.wind_speed_10m_max[index],
-                    rain: res.precipitation_sum[index],
-                    snow: res.snowfall_sum[index],
+                    temp: res.daily.temperature_2m_max[index],
+                    feelsLike: res.daily.apparent_temperature_max[index],
+                    humidity: res.daily.relative_humidity_2m_mean[index],
+                    uvi: res.daily.uv_index_max[index],
+                    clouds: res.daily.cloud_cover_mean[index],
+                    visibility: res.daily.visibility_mean[index],
+                    wind: res.daily.wind_speed_10m_max[index],
+                    rain: res.daily.precipitation_sum[index],
+                    snow: res.daily.snowfall_sum[index],
                 },
             })),
         }

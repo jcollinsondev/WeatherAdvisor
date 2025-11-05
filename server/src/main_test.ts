@@ -1,6 +1,6 @@
 import { assertEquals } from "assert";
 
-import { mock as weatherMock, WeatherServiceRequest } from "@weather";
+import { Timeframe, mock as weatherMock, WeatherServiceRequest } from "@weather";
 import { PromptGenerator } from "@llm";
 
 const mock_location = { 
@@ -12,9 +12,9 @@ const mock_location = {
     timezone: "timezone",
 };
 
-const mock_timeframe = {
-    from: new Date(), 
-    to: new Date(),
+const mock_timeframe: Timeframe = {
+    from: (new Date()).toISOString(), 
+    to: (new Date()).toISOString(), 
 };
 
 Deno.test("Prompt generation hourly", async () => {
@@ -38,7 +38,7 @@ Deno.test("Prompt generation hourly", async () => {
             rain: 0 mm/h,
             snow: 0 mm/h,
         }]. 
-            Responde suggesting the best times of the day if there is at least one.`);
+            Responde suggesting the best times of the day if there is at least one. Keep the answer short.`);
 });
 
 Deno.test("Prompt generation daily", async () => {
@@ -62,5 +62,5 @@ Deno.test("Prompt generation daily", async () => {
             rain: 0 mm/h,
             snow: 0 mm/h,
         }]. 
-            Responde suggesting the best days if there is at least one.`);
+            Responde suggesting the best days if there is at least one. Keep the answer short.`);
 });

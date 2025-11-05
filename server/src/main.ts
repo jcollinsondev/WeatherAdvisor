@@ -1,9 +1,11 @@
 import { OpenMeteoService } from "@OpenMeteo";
 import { GeocodingService } from "@Geocoding";
 import { AddLocationRequest, LocationsTable } from "@location";
+import { AskQuestionRequest, PromptGenerator } from "@llm";
+import { DbService } from "@db";
 
 import { Router } from "./router.ts"
-import { DbService } from "@db";
+import { OllamaService } from "./llm/Ollama/OllamaService.ts";
 
 const port = Deno.env.get("PORT") ?? "8080";
 
@@ -85,6 +87,37 @@ router.get("/api/location/list", async () => {
         status: 200,
         headers: {
             "content-type": "application/json; charset=utf-8",
+            "Access-Control-Allow-Origin": "*",
+        },
+    });
+});
+
+router.post("/api/llm/ask", async ({ request }) => {
+    let body: AskQuestionRequest;
+    try {
+        body = await request.json();
+    } catch {
+        return new Response("Invalid JSON body.", { status: 400, headers: { "Access-Control-Allow-Origin": "*" } });
+    }
+
+    const openMeteo = new OpenMeteoService();
+    const promptGenerator = new PromptGenerator(body.question);
+    const ollama = new OllamaService("tinyllama");
+
+    const [weatherData, weatherDataError] = body.dataType === "hourly" ? await openMeteo.getHourly(body) : await openMeteo.getDaily(body);
+    if (weatherDataError) return new Response(weatherDataError.message, { status: weatherDataError.code, headers: { "Access-Control-Allow-Origin": "*" } });
+
+    promptGenerator.setWeatherData(body.dataType, weatherData);
+    const [prompt, promptError] = promptGenerator.generate();
+    if (promptError) return new Response(promptError.message, { status: promptError.code, headers: { "Access-Control-Allow-Origin": "*" } });
+    
+    const [stream, error] = await ollama.ask(prompt);
+    if (error) return new Response(error.message, { status: error.code, headers: { "Access-Control-Allow-Origin": "*" } });
+
+    return new Response(stream.pipeThrough(new TextEncoderStream()), {
+        status: 200,
+        headers: {
+            "content-type": "application/x-ndjson; charset=utf-8",
             "Access-Control-Allow-Origin": "*",
         },
     });

@@ -13,14 +13,14 @@ body {
 }
 
 main {
-    height: 100vh;
     width: min(100%, 48rem);
     margin: auto;
     display: grid;
-    grid-template-rows: auto 1fr auto;
+    grid-template-rows: auto 1fr;
     gap: 2rem;
     padding-inline: 1rem;
-    padding-block: 2rem;
+    padding-top: 2rem;
+    padding-bottom: 16rem;
 }
 
 section {
@@ -280,6 +280,16 @@ section {
     border-top-right-radius: 0.6rem;
     border-bottom-left-radius: 0.6rem;
     max-width: 75%;
+}
+
+.chat-response {
+    width: 100%;
+    display: flex;
+}
+
+.chat-response-text {
+    margin-right: auto;
+    font-size: 1rem;
 }
 
 .chat-input-container:has(#chat-input-button[waiting="true"]) {

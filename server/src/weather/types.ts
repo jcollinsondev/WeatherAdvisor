@@ -71,6 +71,6 @@ export interface WeatherServiceRequest {
 }
 
 export interface Timeframe {
-    from: Date;
-    to: Date;
+    from: string;
+    to: string;
 }
