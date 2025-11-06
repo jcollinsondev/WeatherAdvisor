@@ -42,7 +42,6 @@ export class Router {
             status: 404,
             headers: {
                 "content-type": "application/json; charset=utf-8",
-                "Access-Control-Allow-Origin": "*",
             },
         });
 

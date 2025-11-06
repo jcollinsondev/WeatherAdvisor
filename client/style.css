@@ -308,7 +308,7 @@ section {
     left: auto;
     right: auto;
     width: min(100%, 48rem);
-    padding-inline: 1rem;
+    padding-right: 2rem;
     padding-block: 2rem;
     background: #ffffff;
     background: linear-gradient(0deg,rgba(255, 255, 255, 1) 80%, rgba(255, 255, 255, 0) 100%);

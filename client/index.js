@@ -1,4 +1,4 @@
-const apiURL = "http://localhost:8080/api";
+const apiURL = "/api";
 
 let currentLocation = undefined;
 
@@ -207,14 +207,11 @@ async function askQuestion(question, responseText) {
     const decoder = new TextDecoder('utf-8');
 
     responseText.innerHTML = "";
-    const { done, value } = await reader.read();
-
-    try {
-        await read(reader, decoder, responseText, done, value);
-    } finally {
-        chatInput.setAttribute("waiting", false);
-        chatInputButton.setAttribute("waiting", false);
-    }
+    const writer = new Typewriter(responseText, 25);
+    
+    await read(reader, decoder, writer);
+    chatInput.setAttribute("waiting", false);
+    chatInputButton.setAttribute("waiting", false);
 }
 
 function calculateTimeframe() {
@@ -261,20 +258,77 @@ function calculateTimeframe() {
     }
 }
 
-async function read(reader, decoder, responseText, done, value) {
+async function read(reader, decoder, writer, buffer = "") {
+    const { done, value } = await reader.read();
     if (done) {
         return;
     }
 
-    const chunk = decoder.decode(value, { stream: true });
+    buffer += decoder.decode(value, { stream: true });
 
-    for (const line of chunk.split("\n")) {
+    const lines = buffer.split("\n");
+    buffer = lines.pop();
+
+    for (const line of lines) {
         if (!line.trim()) continue;
-        const json = JSON.parse(line);
-        const text = document.createTextNode(json.response);
-        responseText.append(text);
+        try {
+            const json = JSON.parse(line);
+            writer.enqueue(json.response);
+        } catch {
+            console.warn("Skipping invalid JSON line:", line);
+        }
     }
 
-    const readResponse = await reader.read();
-    read(reader, decoder, responseText, readResponse.done, readResponse.value);
+    read(reader, decoder, writer, buffer);
+}
+
+function typeText(responseText, text, delay = 30) {
+    let i = 0;
+    const interval = setInterval(() => {
+        const textNode = document.createTextNode(text[i]);
+        responseText.append(textNode);
+        i++;
+        if (i >= text.length) clearInterval(interval);
+    }, delay);
+}
+
+class Typewriter {
+    constructor(element, delay = 30) {
+        this.element = element;
+        this.delay = delay;
+        this.queue = [];
+        this.isTyping = false;
+    }
+
+    enqueue(text) {
+        this.queue.push(text);
+        if (!this.isTyping) {
+            this.processQueue();
+        }
+    }
+
+    async processQueue() {
+        this.isTyping = true;
+
+        while (this.queue.length > 0) {
+            const text = this.queue.shift();
+            await this.typeText(text);
+        }
+
+        this.isTyping = false;
+    }
+
+    typeText(text) {
+        return new Promise(resolve => {
+            let i = 0;
+            const interval = setInterval(() => {
+                this.element.append(text[i] ?? "");
+                i++;
+                if (i >= text.length) {
+                    clearInterval(interval);
+                    resolve();
+                }
+            }, this.delay);
+        });
+    }
 }

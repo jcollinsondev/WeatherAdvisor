@@ -3,20 +3,16 @@ services:
         build: ./server
         volumes:
             - .:/server
-        ports:
-            - "8080:8080"
         container_name: server
         restart: always
         environment:
-            - PORT=8080
+            - PORT=5000
         command: ["deno", "run", "--watch", "--allow-net", "--allow-env", "--allow-read", "./src/main.ts"]
 
     client:
         build: ./client
         volumes:
             - .:/client
-        ports:
-            - "80:80"
         container_name: client
         restart: always
 
@@ -42,3 +38,13 @@ services:
         entrypoint: ["/bin/sh", "-c"]
         command: >
             "ollama serve & sleep 3 && ollama pull tinyllama && wait"
+
+    proxy:
+        image: nginx:alpine
+        ports:
+            - "8080:80"
+        volumes:
+            - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+        depends_on:
+            - client
+            - server
