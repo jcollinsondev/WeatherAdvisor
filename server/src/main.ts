@@ -1,11 +1,11 @@
 import { OpenMeteoService } from "@OpenMeteo";
 import { GeocodingService } from "@Geocoding";
+import { OllamaService } from "@Ollama";
 import { AddLocationRequest, LocationsTable } from "@location";
 import { AskQuestionRequest, PromptGenerator } from "@llm";
 import { DbService } from "@db";
 
 import { Router } from "./router.ts"
-import { OllamaService } from "./llm/Ollama/OllamaService.ts";
 
 const port = Deno.env.get("PORT") ?? "8080";
 

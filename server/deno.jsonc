@@ -9,6 +9,6 @@
         "@location": "./src/location/index.ts",
         "@OpenMeteo": "./src/weather/OpenMeteo/OpenMeteoService.ts",
         "@Geocoding": "./src/location/Geocoding/GeocodingService.ts",
-        "@Ollama": "./src/location/OllamaLlm/OllamaService.ts"
+        "@Ollama": "./src/llm/OllamaLlm/OllamaService.ts"
     }
 }
