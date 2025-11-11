@@ -1,3 +1,4 @@
+//#region SETUP
 const apiURL = "/api";
 
 let currentLocation = undefined;
@@ -23,16 +24,21 @@ chatInput.addEventListener("keypress", ({ key }) => {
 
 addEventListener("load", loadSavedLocations);
 
+//#endregion SETUP
+
 async function loadSavedLocations() {
     const locations = await fetchSavedLocations();
     if (!locations) return;
 
+    // Populate recent locations for suggestion
     locations.forEach(addToSearchHistory);
 }
 
 async function locationSearch(event) {
+    // Hide recent locations to make space for the search locations
     searchHistory.classList.add("hidden");
 
+    // Call API only with a string > 2
     const searchText = event.target.value;
     if (searchText.length < 2) {
         searchSuggestions.innerHTML = "";
@@ -51,6 +57,7 @@ async function locationSearch(event) {
         return;
     }
 
+    // Populate search results
     searchSuggestions.classList.remove("hidden");
     searchSuggestions.innerHTML = "";
     json.results.forEach(location => {
@@ -150,6 +157,7 @@ async function fetchSavedLocations() {
 }
 
 function sendMessage() {
+    // Check if a question is still waiting for a response
     const waitingResponse = chatInput.getAttribute("waiting");
     if (waitingResponse === true) return;
 
@@ -159,6 +167,7 @@ function sendMessage() {
     const responseText = addMessage(question);
     chatInput.value = "";
 
+    // Disable chat while waiting for a response
     chatInput.setAttribute("waiting", true);
     chatInputButton.setAttribute("waiting", true);
 
@@ -264,8 +273,10 @@ async function read(reader, decoder, writer, buffer = "") {
         return;
     }
 
+    // Save the value in buffer because a full line with a valid JSON is not guaranteed
     buffer += decoder.decode(value, { stream: true });
 
+    // Read only the complete lines and keep the uncomplete line in the buffer
     const lines = buffer.split("\n");
     buffer = lines.pop();
 
@@ -273,6 +284,7 @@ async function read(reader, decoder, writer, buffer = "") {
         if (!line.trim()) continue;
         try {
             const json = JSON.parse(line);
+            // Using a writer class for a smoother print
             writer.enqueue(json.response);
         } catch {
             console.warn("Skipping invalid JSON line:", line);
@@ -280,16 +292,6 @@ async function read(reader, decoder, writer, buffer = "") {
     }
 
     read(reader, decoder, writer, buffer);
-}
-
-function typeText(responseText, text, delay = 30) {
-    let i = 0;
-    const interval = setInterval(() => {
-        const textNode = document.createTextNode(text[i]);
-        responseText.append(textNode);
-        i++;
-        if (i >= text.length) clearInterval(interval);
-    }, delay);
 }
 
 class Typewriter {
@@ -300,6 +302,7 @@ class Typewriter {
         this.isTyping = false;
     }
 
+    // A queue for asyncronous printing guarantees the correct order of words
     enqueue(text) {
         this.queue.push(text);
         if (!this.isTyping) {
@@ -321,6 +324,7 @@ class Typewriter {
     typeText(text) {
         return new Promise(resolve => {
             let i = 0;
+            // The interval is necessary to avoid a big chunk of text to be printed all together
             const interval = setInterval(() => {
                 this.element.append(text[i] ?? "");
                 i++;

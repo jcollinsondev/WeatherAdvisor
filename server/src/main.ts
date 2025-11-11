@@ -111,6 +111,7 @@ router.post("/llm/ask", async ({ request }) => {
     const [stream, error] = await ollama.ask(prompt);
     if (error) return new Response(error.message, { status: error.code });
 
+    // Respond with a stream
     return new Response(stream.pipeThrough(new TextEncoderStream()), {
         status: 200,
         headers: {

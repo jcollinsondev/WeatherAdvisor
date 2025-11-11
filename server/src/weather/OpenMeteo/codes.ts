@@ -1,3 +1,4 @@
+// DOCS: https://open-meteo.com/en/docs
 import { WeatherType } from "@weather";
 
 export const weatherCodeMap: Record<number, string> = {

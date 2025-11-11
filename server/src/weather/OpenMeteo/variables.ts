@@ -1,3 +1,4 @@
+// DOCS: https://open-meteo.com/en/docs
 export type HourlyWeatherVariable =
     | "temperature_2m"
     | "relative_humidity_2m"

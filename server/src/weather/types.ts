@@ -1,5 +1,6 @@
 import { Location } from "@location";
 
+// String value to map with the weather icon on the client
 export type WeatherType = 
     | "sunny"
     | "clear-night"
