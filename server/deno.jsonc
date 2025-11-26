@@ -1,6 +1,7 @@
 {
     "imports": {
         "assert": "https://deno.land/std@0.198.0/assert/mod.ts",
+        "mock": "https://deno.land/std@0.198.0/testing/mock.ts",
         "postgres": "jsr:@db/postgres",
         "@utils": "./src/utils/index.ts",
         "@db": "./src/db/index.ts",

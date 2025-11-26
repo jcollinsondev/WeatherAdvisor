@@ -1,11 +1,13 @@
 // https://developer.mozilla.org/en-US/docs/Web/API/ReadableStream/ReadableStream
-import { LlmStreamChunk } from "@llm";
+import { LlmStreamChunk } from "./types.ts";
 
-import { OllamaResponse } from "./types.ts";
+export class StreamReader<T> implements UnderlyingDefaultSource<string> {
 
-export class StreamReader implements UnderlyingDefaultSource<string> {
-
-    constructor(private reader: ReadableStreamDefaultReader<Uint8Array<ArrayBuffer>>, private decoder: TextDecoder) { }
+    constructor(
+        private reader: ReadableStreamDefaultReader<Uint8Array<ArrayBufferLike>>, 
+        private decoder: TextDecoder,
+        private mapper: (data: T) => LlmStreamChunk
+    ) { }
 
     async start(controller: ReadableStreamDefaultController<string>) {
         await this.read(controller);
@@ -30,8 +32,8 @@ export class StreamReader implements UnderlyingDefaultSource<string> {
 
         for (const line of chunk.split("\n")) {
             if (!line.trim()) continue;
-            const json: OllamaResponse = JSON.parse(line);
-            const normalized: LlmStreamChunk = { createdAt: json.created_at, response: json.response, done: json.done };
+            const json: T = JSON.parse(line);
+            const normalized: LlmStreamChunk = this.mapper(json);
             controller.enqueue(JSON.stringify(normalized) + "\n");
         }
     }

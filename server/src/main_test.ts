@@ -1,8 +1,10 @@
 import { assertEquals } from "assert";
+import { assertSpyCalls, spy } from "mock";
 
 import { Timeframe, mock as weatherMock, WeatherServiceRequest } from "@weather";
-import { PromptGenerator } from "@llm";
+import { LlmStreamChunk, PromptGenerator, StreamReader } from "@llm";
 
+//#region Prompt Generation Tests
 const mock_location = { 
     name: "town", 
     lat: 0, 
@@ -64,3 +66,130 @@ Deno.test("Prompt generation daily", async () => {
         }]. 
             Responde suggesting the best days if there is at least one. Keep the answer short.`);
 });
+//#endregion
+
+//#region Read Stream Tests
+function createMockReader(chunks: (Uint8Array | null)[]): ReadableStreamDefaultReader<Uint8Array> {
+    let index = 0;
+    return {
+        read: () => {
+            const value = chunks[index++];
+            if (value === null) return new Promise(resolve => resolve({ done: true, value: undefined }));
+            return new Promise(resolve => resolve({ done: false, value }));
+        },
+        cancel: async () => { },
+        releaseLock: async () => { },
+        closed: new Promise(resolve => resolve(undefined)),
+    };
+}
+
+const mockDecoder: TextDecoder = {
+    decode: (value: Uint8Array) => new TextDecoder().decode(value),
+    encoding: "",
+    fatal: false,
+    ignoreBOM: false
+};
+
+const mockMapper: (data: { foo: number }) => LlmStreamChunk = (json: { foo: number }) => ({
+    createdAt: new Date(0),
+    response: json.foo.toString(),
+    done: false,
+});
+
+function createMockController(enqueued: string[]): ReadableStreamDefaultController<string> {
+    return {
+        enqueue: (v: string) => enqueued.push(v),
+        close: () => enqueued.push("<closed>"),
+        desiredSize: null,
+        error: () => { },
+    };
+}
+
+Deno.test("StreamReader reads, decodes, maps, and enqueues lines", async () => {
+    const input = new TextEncoder().encode(
+        JSON.stringify({ foo: 1 }) + "\n" +
+        JSON.stringify({ foo: 2 }) + "\n"
+    );
+
+    const mockReader = createMockReader([input, null]);
+
+    const enqueued: string[] = [];
+    const controller = createMockController(enqueued);
+
+    const reader = new StreamReader<{ foo: number }>(mockReader, mockDecoder, mockMapper);
+
+    await reader.start(controller);
+
+    assertEquals(enqueued.length, 2);
+    assertEquals(enqueued[0], JSON.stringify({
+        createdAt: new Date(0),
+        response: "1",
+        done: false,
+    }) + "\n");
+    assertEquals(enqueued[1], JSON.stringify({
+        createdAt: new Date(0),
+        response: "2",
+        done: false,
+    }) + "\n");
+});
+
+Deno.test("StreamReader skips blank lines", async () => {
+    const input = new TextEncoder().encode("\n\n" + JSON.stringify({ foo: 1 }) + "\n");
+
+    const mockReader = createMockReader([input, null]);
+
+    const enqueued: string[] = [];
+    const controller = createMockController(enqueued);
+
+    const reader = new StreamReader<{ foo: number }>(mockReader, mockDecoder, mockMapper);
+
+    await reader.pull(controller);
+
+    assertEquals(enqueued.length, 1);
+    assertEquals(enqueued[0], JSON.stringify({
+        createdAt: new Date(0),
+        response: "1",
+        done: false,
+    }) + "\n");
+});
+
+Deno.test("StreamReader.cancel calls underlying reader.cancel", async () => {
+    const mockReader = createMockReader([null]);
+    const cancelSpy = spy(mockReader, "cancel");
+
+    const reader = new StreamReader(mockReader, mockDecoder, mockMapper);
+
+    await reader.cancel();
+
+    assertSpyCalls(cancelSpy, 1);
+});
+
+Deno.test("StreamReader.pull reads sequential chunks", async () => {
+    const chunk1 = new TextEncoder().encode(JSON.stringify({ foo: 1 }) + "\n");
+    const chunk2 = new TextEncoder().encode(JSON.stringify({ foo: 2 }) + "\n");
+
+    const mockReader = createMockReader([chunk1, chunk2, null]);
+
+    const enqueued: string[] = [];
+    const controller = createMockController(enqueued);
+
+    const reader = new StreamReader<{ foo: number }>(mockReader, mockDecoder, mockMapper);
+
+    await reader.pull(controller);
+    await reader.pull(controller);
+    await reader.pull(controller);
+
+    assertEquals(enqueued.length, 3);
+    assertEquals(enqueued[0], JSON.stringify({
+        createdAt: new Date(0),
+        response: "1",
+        done: false,
+    }) + "\n");
+    assertEquals(enqueued[1], JSON.stringify({
+        createdAt: new Date(0),
+        response: "2",
+        done: false,
+    }) + "\n");
+    assertEquals(enqueued[2], "<closed>");
+});
+//#endregion

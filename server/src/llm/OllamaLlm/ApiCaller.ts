@@ -1,7 +1,7 @@
 import { PossibleError, Error } from "@utils";
+import { StreamReader } from "@llm";
 
 import { OllamaRequest, OllamaResponse } from "./types.ts";
-import { StreamReader } from "./StreamReader.ts";
 
 export class ApiCaller {
     constructor(private req: OllamaRequest) {}
@@ -31,8 +31,9 @@ export class ApiCaller {
 
         const reader = response.body.getReader();
         const decoder = new TextDecoder();
+        const mapper = (r: OllamaResponse) => ({ createdAt: r.created_at, response: r.response, done: r.done });
 
-        const stream = new ReadableStream<string>(new StreamReader(reader, decoder));
+        const stream = new ReadableStream<string>(new StreamReader<OllamaResponse>(reader, decoder, mapper));
 
         return [stream, undefined];
     }
