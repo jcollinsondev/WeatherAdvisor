@@ -37,7 +37,7 @@ services:
             - OLLAMA_HOST=0.0.0.0
         entrypoint: ["/bin/sh", "-c"]
         command: >
-            "ollama serve & sleep 3 && ollama pull tinyllama && wait"
+            "ollama serve"
 
     proxy:
         image: nginx:alpine

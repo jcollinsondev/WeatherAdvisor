@@ -36,6 +36,10 @@ Start all services using Docker Compose
 ```sh
 docker compose up
 ```
+Pull the Ollama model (0.7GB)
+```sh
+docker exec -it ollama ollama pull tinyllama
+```
 
 ## Usage
 
